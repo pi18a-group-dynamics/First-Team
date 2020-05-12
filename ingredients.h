@@ -15,7 +15,12 @@ class Ingredients : public QDialog
 public:
     explicit Ingredients(QWidget *parent = nullptr);
      void connect_database();
+     void form_init();
+     void push_init();
     ~Ingredients();
+
+private slots:
+     void on_add_ingr_btn__clicked();
 
 private:
     Ui::Ingredients *ui;
