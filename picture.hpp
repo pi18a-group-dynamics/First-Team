@@ -7,6 +7,7 @@
 class Picture : public QLabel {
     Q_OBJECT
 public:
+    Picture();
     explicit Picture(QWidget * = nullptr);
     explicit Picture(QPixmap);
     void set_pixmap(QPixmap);

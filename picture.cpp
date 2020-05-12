@@ -2,6 +2,10 @@
 #include <QPaintEvent>
 #include <QPainter>
 
+Picture::Picture() {
+
+}
+
 Picture::Picture(QWidget* parent)
 : QLabel(parent) {
 
@@ -18,6 +22,9 @@ void Picture::set_pixmap(QPixmap pixmap) {
 }
 
 void Picture::paintEvent(QPaintEvent *event) {
+    if (pixmap_.isNull()) {
+        return QLabel::paintEvent(event);
+    }
     QPainter painter(this);
     QSize current_size_picture = (size().width() > pixmap_.width() && size().height() > pixmap_.height()) //Если размер виджета по ширине и высоте больше чем размер исходной картинки
                                  ? pixmap_.size()                                                         //То устанавливаем размер картинки (не хочется терять качество)

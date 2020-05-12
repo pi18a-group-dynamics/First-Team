@@ -4,7 +4,8 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QSqlQueryModel>
-#include <QListView>
+#include <QTableWidget>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui_->setupUi(this);
     connect_database();
     init_form();
+
 }
 
 void MainWindow::connect_database() {
@@ -31,16 +33,48 @@ void MainWindow::init_form() {
     ui_->categories_tool_->removeItem(0);
     QSqlQuery categories;
     categories.exec("SELECT * FROM categories;");
-    QSqlQueryModel* model;
-    QListView* view;
     QSqlQuery recipies;
+    QTableWidget* table;
+    auto new_table = []() -> QTableWidget* {        //Создаёт новую таблицу с настройками
+            QTableWidget* table = new QTableWidget;
+            table->setColumnCount(3);
+            table->setShowGrid(false);
+            table->setColumnHidden(0, true);
+            table->horizontalHeader()->hide();
+            table->verticalHeader()->hide();
+            table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::Stretch);
+            table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
+            table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            table->setSelectionMode(QTableWidget::NoSelection);
+            return table;
+    };
+    QTableWidgetItem* item;
+    auto add_row = [&](size_t i) {                  //Вставляет строку в таблицу
+        table->setRowCount(table->rowCount() + 1);
+        item = new QTableWidgetItem;
+        if (recipies.value("chosen").toBool()) {
+            item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-проверено-512.png").scaled(30, 30, Qt::KeepAspectRatio));
+            item->setText("Избранный");
+        } else {
+            item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-отмена-512.png").scaled(30, 30, Qt::KeepAspectRatio));
+            item->setText("Не избранное");
+        }
+        table->setRowHeight(i, 30);
+        table->setItem(i, 2, item);
+        item = new QTableWidgetItem;
+        item->setText(recipies.value("name").toString());
+        table->setItem(i, 1, item);
+        item = new QTableWidgetItem;
+        item->setText(recipies.value("id").toString());
+        table->setItem(i, 0, item);
+    };
     while (categories.next()) {
-        model = new QSqlQueryModel();
-        model->setQuery("SELECT name FROM recipies WHERE category_id = \'" + categories.value("id").toString() + "\';");
-        view = new QListView;
-        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setModel(model);
-        ui_->categories_tool_->addItem(view, categories.value("name").toString());
+        table = new_table();
+        recipies.exec("SELECT * FROM recipies WHERE category_id = \'" + categories.value("id").toString() + "\' ORDER BY chosen DESC;");
+        for (size_t i = 0; recipies.next(); ++i) {
+            add_row(i);
+        }
+        ui_->categories_tool_->addItem(table, categories.value("name").toString());
     }
 }
 

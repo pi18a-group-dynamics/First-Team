@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "form.h"
 #include <QApplication>
 #include <iostream>
 
