@@ -96,7 +96,7 @@ void MainWindow::update_category(QString category_name) { //Не работае�
     table.setRowCount(0);
     QSqlQuery recipies;
     recipies.prepare("SELECT * FROM recipies WHERE category_id = "
-                     "(SELECT id FROM categories WHERE name = :category_name) ORDER BY chosen DESC;");
+                     "(SELECT id FROM categories WHERE name = :category_name) ORDER BY chosen DESC, name;");
     recipies.bindValue(":category_name", category_name);
     if (!recipies.exec()) {
         QMessageBox::warning(this, "Предупреждение", "Не удалось обновить категорию: " + category_name);
@@ -112,7 +112,7 @@ void MainWindow::init_form() {
     QSqlQuery categories;
     categories.exec("SELECT * FROM categories;");
     QSqlQuery recipies;
-    recipies.prepare("SELECT * FROM recipies WHERE category_id = :category_id ORDER BY chosen DESC;");
+    recipies.prepare("SELECT * FROM recipies WHERE category_id = :category_id ORDER BY chosen DESC, name;");
     QTableWidget* table;
     while (categories.next()) {
         table = create_category_table(categories.value("name").toString());
