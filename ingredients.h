@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMainWindow>
 #include <QSqlDatabase>
+#include <QSqlQueryModel>
 namespace Ui {
 class Ingredients;
 }
@@ -16,7 +17,7 @@ public:
     explicit Ingredients(QWidget *parent = nullptr);
      void connect_database();
      void form_init();
-     void push_init();
+     void update_table();
     ~Ingredients();
 
 private slots:
@@ -25,6 +26,7 @@ private slots:
 private:
     Ui::Ingredients *ui;
     QSqlDatabase database_;
+    QSqlQueryModel * model;
 };
 
 #endif // INGREDIENTS_H
