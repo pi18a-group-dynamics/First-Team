@@ -38,6 +38,7 @@ void Ingredients::form_init() {
     QObject::connect(ui->ingr_table_,&QTableView::clicked,[this](const QModelIndex & index){
         ui->name_ingr_line_->setText(model->data(model->index(index.row(),1)).toString());
         ui->mer_ingr_line_->setText(model->data(model->index(index.row(),2)).toString());
+        current_id= model->data(model->index(index.row(),0)).toString();
     });
 }
 
@@ -68,5 +69,51 @@ void Ingredients::on_add_ingr_btn__clicked()
             qDebug() << query.lastQuery();
         }
     update_table();
+    }
+}
+
+void Ingredients::on_erase_ingr_btn__clicked()
+{
+    if(ui->mer_ingr_line_->text().isEmpty() || ui->name_ingr_line_->text().isEmpty()){
+        QMessageBox::warning(nullptr,"Не выбран ингредиент", "Выберете ингредиент для удаления");
+    } else {
+
+        QSqlQuery query;
+        if(query.exec("SELECT id FROM ingredients WHERE id="+current_id+";")&&  query.last()==true){
+
+        if(query.exec("DELETE FROM ingredients WHERE id="+current_id+";")){
+            update_table();
+             QMessageBox::information(nullptr,"Удаление", "Удален ингредиент");
+        } else {
+             QMessageBox::information(nullptr,"Удаление", "Не удалось удалить");
+        }
+    } else {
+           QMessageBox::information(nullptr,"Удаление", "Запись не обнаружена");
+        }
+
+    }
+}
+
+void Ingredients::on_change_ingr_btn__clicked()
+{
+    if(ui->mer_ingr_line_->text().isEmpty() || ui->name_ingr_line_->text().isEmpty()){
+        QMessageBox::warning(nullptr,"Не выбран ингредиент", "Выберете ингредиент для изменения");
+    } else {
+
+        QSqlQuery query;
+        if(query.exec("SELECT id FROM ingredients WHERE id="+current_id+";")&&  query.last()==true){
+
+        if(query.exec("UPDATE ingredients SET name= '"+ui->name_ingr_line_->text()+
+                      "', meansurement = '"+ui->mer_ingr_line_->text()+"'"
+                      """WHERE id="+current_id+";")){
+            update_table();
+             QMessageBox::information(nullptr,"Изменение", "Изменен ингредиент");
+        } else {
+             QMessageBox::information(nullptr,"Изменениее", "Не удалось изменить");
+        }
+    } else {
+           QMessageBox::information(nullptr,"Изменение", "Запись не обнаружена");
+        }
+
     }
 }

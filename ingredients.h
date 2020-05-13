@@ -23,10 +23,15 @@ public:
 private slots:
      void on_add_ingr_btn__clicked();
 
+     void on_erase_ingr_btn__clicked();
+
+     void on_change_ingr_btn__clicked();
+
 private:
     Ui::Ingredients *ui;
     QSqlDatabase database_;
     QSqlQueryModel * model;
+     QString current_id;
 };
 
 #endif // INGREDIENTS_H
