@@ -63,12 +63,12 @@ void Ingredients::on_add_ingr_btn__clicked() {
     }
     QSqlQuery query;
 
-    query.prepare("SELECT count(*) FROM ingredients WHERE name= :name, meansurement = :meansurement ");
+    query.prepare("SELECT EXISTS(SELECT * FROM ingredients WHERE name = :name AND meansurement = :meansurement);");
     query.bindValue(":name", ui_->name_ingr_line_->text());
     query.bindValue(":meansurement", ui_->mer_ingr_line_->text());
     query.exec();
     query.first();
-    if (!query.value(0).toBool()){
+    if (query.value(0).toBool()){
         QMessageBox::warning(nullptr, "Ингредиент уже есть", "Такой ингредиент уже существует");
         return;
     }
