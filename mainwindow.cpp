@@ -143,8 +143,9 @@ void MainWindow::init_form() {
     }
     QAction* action = new QAction;
     action->setText("Ингредиенты");
-    connect(action, &QAction::triggered, [action]() {
+    connect(action, &QAction::triggered, [this, action]() {
         Ingredients* ingredients = new Ingredients;
+        QObject::connect(ingredients, &Ingredients::category_change, this, &MainWindow::update_category);
         ingredients->setAttribute(Qt::WA_DeleteOnClose);
         action->setEnabled(false);
         ingredients->show();

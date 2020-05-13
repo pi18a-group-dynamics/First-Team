@@ -81,12 +81,22 @@ void Ingredients::on_erase_ingr_btn__clicked() {
         QMessageBox::warning(nullptr, "Не выбран ингредиент", "Выберете ингредиент для удаления");
         return;
     }
+    QSqlQuery query;
+    query.prepare("SELECT DISTINCT c.name FROM ingredients_of_recipies ir "
+               "LEFT JOIN recipies r ON ir.recipe_id = r.id "
+               "LEFT JOIN categories c ON r.category_id = c.id "
+               "WHERE ir.ingredient_id = :ingredient_id;");
+    query.bindValue(":ingredient_id", current_id);
+    query.exec();   //Получение всег категорий (ДО УДАЛЕНИЯ ИНГРИДИЕНТА (СРАБАТЫВАЕТ ТРИГГЕР И НЕВОЗМОЖНО ПОЛУЧИТЬ КАТЕГОРИЮ РЕЦЕПТА КОТОРОГО НЕТ)!!!!)
     if (!QSqlQuery().exec("DELETE FROM ingredients WHERE id = " + current_id + ';')) {
         QMessageBox::warning(nullptr, "Не удалось удалить", "Запись не обнаружена");
         return;
     }
     update_table();
     QMessageBox::information(nullptr, "Удаление", "Удален ингредиент");
+    while (query.next()) {  //Обновление всех категорий, где удалились рецепты
+        emit category_change(query.value("name").toString());
+    }
 }
 
 void Ingredients::on_change_ingr_btn__clicked() {
