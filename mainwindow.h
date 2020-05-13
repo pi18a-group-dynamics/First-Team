@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSqlDatabase>
+#include <QTableWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,5 +19,7 @@ public:
 private:
     Ui::MainWindow *ui_;
     QSqlDatabase database_;
+    void update_category(QString category_name) noexcept(false); //Обновлнение одной категории (одного пункта)
+    QTableWidget* new_table_category();
 };
 #endif // MAINWINDOW_H
