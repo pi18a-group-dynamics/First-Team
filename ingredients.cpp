@@ -44,6 +44,8 @@ void Ingredients::form_init() {
 
 void Ingredients::update_table(){
     model->setQuery(model->query().lastQuery());
+    ui->name_ingr_line_->setText("");
+    ui->mer_ingr_line_->setText("");
 }
 
 Ingredients::~Ingredients()
