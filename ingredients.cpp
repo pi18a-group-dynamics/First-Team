@@ -12,21 +12,7 @@ Ingredients::Ingredients(QWidget *parent)
 : QDialog(parent)
 , ui_(new Ui::Ingredients) {
     ui_->setupUi(this);
-    connect_database();
     form_init();
-}
-
-void Ingredients::connect_database() {
-    database_ = QSqlDatabase::addDatabase("QPSQL");
-    database_.setPort(5432);
-    database_.setHostName("localhost");
-    database_.setUserName("postgres");
-    database_.setPassword("postgres");
-    database_.setDatabaseName("recipe_book");
-    if (!database_.open()) {
-        QMessageBox::critical(nullptr, "Ошибка подключения", "Ошибка соединения с базой данных");
-        std::terminate();
-    }
 }
 
 void Ingredients::form_init() {
@@ -39,7 +25,8 @@ void Ingredients::form_init() {
     ui_->ingr_table_->setColumnHidden(0, true);
     ui_->ingr_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     ui_->ingr_table_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
-    ui_->ingr_table_->setSelectionMode(QTableView::SingleSelection);
+    ui_->ingr_table_->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+    ui_->ingr_table_->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     QObject::connect(ui_->ingr_table_, &QTableView::clicked, [this](const QModelIndex& index) {
         ui_->name_ingr_line_->setText(model_->data(model_->index(index.row(), 1)).toString());
         ui_->mer_ingr_line_->setText(model_->data(model_->index(index.row(), 2)).toString());
@@ -123,4 +110,8 @@ void Ingredients::on_change_ingr_btn__clicked() {
     }
     update_table();
     QMessageBox::information(nullptr, "Изменение", "Ингредиент изменён");
+}
+
+void Ingredients::on_close_btn__clicked() {
+    close();
 }

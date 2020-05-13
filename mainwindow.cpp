@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSqlQueryModel>
 #include <QListView>
+#include "ingredients.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -12,6 +13,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui_->setupUi(this);
     connect_database();
     init_form();
+    QAction* action = new QAction;
+    action->setText("Ингредиенты");
+    connect(action, &QAction::triggered, [action]() {
+        Ingredients* ingredients = new Ingredients;
+        ingredients->setAttribute(Qt::WA_DeleteOnClose);
+        action->setEnabled(false);
+        ingredients->show();
+        QObject::connect(ingredients, &Ingredients::destroyed, [action]() {
+            action->setEnabled(true);
+        });
+    });
+    ui_->menubar->addAction(action);
 }
 
 void MainWindow::connect_database() {
