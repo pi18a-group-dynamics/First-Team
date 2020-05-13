@@ -46,7 +46,25 @@ QTableWidget* MainWindow::create_category_table(QString category_name) {
     QObject::connect(table, &QTableWidget::clicked, [this, category_name](const QModelIndex& index) {
         const QAbstractItemModel* model = index.model();
         if (index.column() == 1) {
-            qDebug() << "Название: " << model->data(model->index(index.row(), 1)).toString();
+            QString recipies_id = model->data(model->index(index.row(), 0)).toString();
+            QSqlQuery query;
+            query.prepare("SELECT algorithm FROM recipies WHERE id = :id;");
+            query.bindValue(":id", recipies_id);
+            query.exec();
+            query.next();
+            ui_->algorithm_text_->setPlainText(query.value(0).toString());
+            QSqlQueryModel* model = new QSqlQueryModel;
+            model->setQuery("SELECT "
+                            "i.name AS \"Ингредиент\", "
+                            "CONCAT(CONCAT(CONCAT(ir.count, ' ('), i.meansurement), ')')"
+                            " AS \"Количество\" FROM ingredients_of_recipies ir "
+                            "LEFT JOIN ingredients i ON ir.ingredient_id = i.id "
+                            "WHERE recipe_id = \'" + recipies_id + "\';");
+            ui_->ingredients_table_->setModel(model);
+            ui_->ingredients_table_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+            ui_->ingredients_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+            ui_->ingredients_table_->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+            ui_->ingredients_table_->setShowGrid(false);
         } else if (index.column() == 2) {
             QSqlQuery query;
             query.prepare("UPDATE recipies SET chosen = NOT :chosen WHERE id = :id;");
