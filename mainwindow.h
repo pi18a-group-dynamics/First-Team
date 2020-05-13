@@ -19,7 +19,8 @@ public:
 private:
     Ui::MainWindow *ui_;
     QSqlDatabase database_;
-    void update_category(QString category_name) noexcept(false); //Обновлнение одной категории (одного пункта)
-    QTableWidget* new_table_category();
+    void update_category(QString category_name) noexcept(false);        //Обновлнение одной категории (одного пункта)
+    QTableWidget* create_category_table(QString category_name);         //Возвращает настроенную таблицу для категории
+    void insert_recipies(QTableWidget* table, QSqlQuery& reci);         //Вставка рецепта в категорию
 };
 #endif // MAINWINDOW_H
