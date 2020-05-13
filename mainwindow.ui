@@ -196,14 +196,8 @@ p, li { white-space: pre-wrap; }
      <string>Категории</string>
     </property>
    </widget>
-   <widget class="QMenu" name="ingredients_menu_">
-    <property name="title">
-     <string>Ингредиенты</string>
-    </property>
-   </widget>
    <addaction name="recipes_menu_"/>
    <addaction name="categories_menu_"/>
-   <addaction name="ingredients_menu_"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="push_rec_">
