@@ -20,7 +20,7 @@ public:
 private:
     Ui::MainWindow *ui_;
     QSqlDatabase database_;
-    QTableWidget* create_category_table(QString category_name);         //Возвращает настроенную таблицу для категории
+    QTableWidget* create_category_table(QString category_name, QPixmap icon);         //Возвращает настроенную таблицу для категории
     void insert_recipies(QTableWidget* table, const Recipe& recipe);         //Вставка рецепта в категорию
     void insert_recipies(QTableWidget* table, QSqlQuery query);
 private slots:

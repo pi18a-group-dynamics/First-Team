@@ -35,7 +35,7 @@ void MainWindow::connect_database() {
     }
 }
 
-QTableWidget* MainWindow::create_category_table(QString category_name) {
+QTableWidget* MainWindow::create_category_table(QString category_name, QPixmap photo) {
     QTableWidget* table = new QTableWidget;
     table->setColumnCount(3);
     table->setShowGrid(false);
@@ -89,7 +89,7 @@ QTableWidget* MainWindow::create_category_table(QString category_name) {
             update_category(category_name);
         }
     });
-    ui_->categories_tool_->addItem(table, category_name);
+    ui_->categories_tool_->addItem(table, photo, category_name);
     return table;
 }
 
@@ -116,7 +116,7 @@ void MainWindow::insert_recipies(QTableWidget* table, const Recipe& recipe) {
 }
 
 void MainWindow::insert_recipies(QTableWidget* table, QSqlQuery query) {
-    Recipe recipe{};
+    Recipe recipe;
     recipe.id          = query.value("id").toString();
     recipe.category_id = query.value("category_id").toString();
     recipe.algorithm   = query.value("algorithm").toString();
@@ -129,7 +129,13 @@ void MainWindow::update_category(QString category_name) {
     int category_index = 0;
     while (ui_->categories_tool_->itemText(category_index) != category_name) {
         if (ui_->categories_tool_->count() - 1 < category_index) { //Если не нашли нужную категорию
-            ui_->categories_tool_->addItem(create_category_table(category_name), category_name);
+            QSqlQuery query;
+            query.prepare("SELECT photo FROM categories WHERE name = :name;");
+            query.bindValue(":name", category_name);
+            QByteArray bytea = query.value("photo").toByteArray();
+            QPixmap photo;
+            photo.loadFromData(bytea, "PNG");
+            create_category_table(category_name, photo);
             break;
         }
         ++category_index;
@@ -153,12 +159,16 @@ void MainWindow::update_category(QString category_name) {
 void MainWindow::init_form() {
     ui_->categories_tool_->removeItem(0);
     QSqlQuery categories;
-    categories.exec("SELECT * FROM categories;");
+    categories.exec("SELECT * FROM categories ORDER BY name;");
     QSqlQuery recipies;
     recipies.prepare("SELECT * FROM recipies WHERE category_id = :category_id ORDER BY chosen DESC, name;");
     QTableWidget* table;
     while (categories.next()) {
-        table = create_category_table(categories.value("name").toString());
+        QByteArray bytea;
+        bytea = categories.value("photo").toByteArray();
+        QPixmap photo;
+        photo.loadFromData(bytea, "PNG");
+        table = create_category_table(categories.value("name").toString(), photo);
         recipies.bindValue(":category_id", categories.value("id"));
         recipies.exec();
         while (recipies.next()) {
