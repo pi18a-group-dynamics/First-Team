@@ -127,20 +127,23 @@ void MainWindow::insert_recipies(QTableWidget* table, QSqlQuery query) {
 
 void MainWindow::update_category(QString category_name) {
     int category_index = 0;
+    QSqlQuery query;
+    query.prepare("SELECT photo FROM categories WHERE name = :name;");
+    query.bindValue(":name", category_name);
+    QPixmap photo;
+    if (query.exec() && query.next()) {
+        QByteArray bytea = query.value("photo").toByteArray();
+        photo.loadFromData(bytea, "PNG");
+    }
     while (ui_->categories_tool_->itemText(category_index) != category_name) {
         if (ui_->categories_tool_->count() - 1 < category_index) { //Если не нашли нужную категорию
-            QSqlQuery query;
-            query.prepare("SELECT photo FROM categories WHERE name = :name;");
-            query.bindValue(":name", category_name);
-            QByteArray bytea = query.value("photo").toByteArray();
-            QPixmap photo;
-            photo.loadFromData(bytea, "PNG");
             create_category_table(category_name, photo);
             break;
         }
         ++category_index;
     }
     QTableWidget& table = dynamic_cast<QTableWidget&>(*(ui_->categories_tool_->widget(category_index)));
+    ui_->categories_tool_->setItemIcon(category_index, photo);
     table.clear();
     table.setRowCount(0);
     QSqlQuery recipies;
@@ -163,10 +166,10 @@ void MainWindow::init_form() {
     QSqlQuery recipies;
     recipies.prepare("SELECT * FROM recipies WHERE category_id = :category_id ORDER BY chosen DESC, name;");
     QTableWidget* table;
+    QPixmap photo;
+    QByteArray bytea;
     while (categories.next()) {
-        QByteArray bytea;
-        bytea = categories.value("photo").toByteArray();
-        QPixmap photo;
+        bytea = categories.value("photo").toByteArray();        
         photo.loadFromData(bytea, "PNG");
         table = create_category_table(categories.value("name").toString(), photo);
         recipies.bindValue(":category_id", categories.value("id"));
