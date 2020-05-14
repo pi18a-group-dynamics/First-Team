@@ -28,7 +28,7 @@
            <x>0</x>
            <y>0</y>
            <width>189</width>
-           <height>224</height>
+           <height>229</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -43,7 +43,7 @@
                <x>0</x>
                <y>0</y>
                <width>171</width>
-               <height>175</height>
+               <height>184</height>
               </rect>
              </property>
              <attribute name="label">
@@ -160,7 +160,7 @@
      <x>0</x>
      <y>0</y>
      <width>475</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="recipes_menu_">
@@ -171,13 +171,7 @@
     <addaction name="change_rec_"/>
     <addaction name="erase_rec_"/>
    </widget>
-   <widget class="QMenu" name="categories_menu_">
-    <property name="title">
-     <string>Категории</string>
-    </property>
-   </widget>
    <addaction name="recipes_menu_"/>
-   <addaction name="categories_menu_"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="push_rec_">

@@ -8,7 +8,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QSqlError>
-
+#include <QBuffer>
+#include <QByteArray>
 Categories::Categories(QWidget *parent) :
     QWidget(parent),
     ui_(new Ui::Categories) {
@@ -29,7 +30,7 @@ void Categories::form_init(){
            ui_->categ_table_->setItem(i,1, new QTableWidgetItem(query.value(1).toString()));
            ui_->categ_table_->setItem(i,2, new QTableWidgetItem(query.value(2).toString()));
        }
-
+     
        QObject::connect(ui_->categ_table_, &QTableWidget::clicked, [this](const QModelIndex& index) {
          const QAbstractItemModel* model = index.model();
          ui_->name_line_->setText(model->data(model->index(index.row(),1)).toString());

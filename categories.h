@@ -13,10 +13,14 @@ class Categories : public QWidget
 
 public:
     explicit Categories(QWidget *parent = nullptr);
+    void form_init();
     ~Categories();
 
+private slots:
+    void on_close_btn__clicked();
+
 private:
-    Ui::Categories *ui;
+    Ui::Categories *ui_;
 };
 
 #endif // CATEGORIES_H

@@ -6,7 +6,7 @@
 #include <QSqlQueryModel>
 #include <QListView>
 #include "ingredients.h"
-
+#include "categories.h"
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
 , ui_(new Ui::MainWindow) {
@@ -25,6 +25,19 @@ MainWindow::MainWindow(QWidget *parent)
         });
     });
     ui_->menubar->addAction(action);
+    QAction* action_2 = new QAction;
+    action_2->setText("Категории");
+    connect(action_2, &QAction::triggered, [action_2]() {
+        Categories * categories = new  Categories;
+        categories->setAttribute(Qt::WA_DeleteOnClose);
+        action_2->setEnabled(false);
+        categories->show();
+        QObject::connect(categories, &Categories::destroyed, [action_2]() {
+            action_2->setEnabled(true);
+        });
+    });
+    ui_->menubar->addAction(action_2);
+
 }
 
 void MainWindow::connect_database() {
