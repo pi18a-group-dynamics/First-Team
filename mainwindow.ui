@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>533</width>
-    <height>356</height>
+    <width>539</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>247</width>
-           <height>257</height>
+           <width>253</width>
+           <height>280</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -51,8 +51,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>229</width>
-               <height>208</height>
+               <width>235</width>
+               <height>231</height>
               </rect>
              </property>
              <attribute name="icon">
@@ -179,7 +179,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>533</width>
+     <width>539</width>
      <height>22</height>
     </rect>
    </property>

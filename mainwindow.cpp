@@ -6,6 +6,8 @@
 #include <QSqlQueryModel>
 #include <QTableWidget>
 #include <QPixmap>
+#include <QBuffer>
+#include <QByteArray>
 #include <QModelIndex>
 #include <QAbstractItemModel>
 #include <QDebug>
@@ -66,6 +68,18 @@ QTableWidget* MainWindow::create_category_table(QString category_name) {
             ui_->ingredients_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
             ui_->ingredients_table_->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
             ui_->ingredients_table_->setShowGrid(false);
+            QByteArray bytea;
+            QBuffer buffer(&bytea);
+            buffer.open(QIODevice::ReadOnly);
+            query.prepare("SELECT photo FROM recipe_photo WHERE id = :id");
+            query.bindValue(":id", recipies_id);
+            query.exec();
+            if (query.next()) {
+                bytea = query.value("photo").toByteArray();
+                QPixmap photo;
+                photo.loadFromData(bytea, "PNG");
+                ui_->photo_->set_pixmap(photo);
+            }
         } else if (index.column() == 2) {
             QSqlQuery query;
             query.prepare("UPDATE recipies SET chosen = NOT :chosen WHERE id = :id;");
@@ -79,14 +93,14 @@ QTableWidget* MainWindow::create_category_table(QString category_name) {
     return table;
 }
 
-void MainWindow::insert_recipies(QTableWidget* table, QSqlQuery& recipe) {
+void MainWindow::insert_recipies(QTableWidget* table, const Recipe& recipe) {
     table->setRowCount(table->rowCount() + 1);
     size_t row = table->rowCount() - 1;
     QTableWidgetItem* item = new QTableWidgetItem;
-    if (recipe.value("chosen").toBool()) {
+    if (recipe.chosen) {
         item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-проверено-512.png").scaled(30, 30, Qt::KeepAspectRatio));
         item->setText("Избранный");
-        item->setData(Qt::UserRole, recipe.value("chosen").toBool());
+        item->setData(Qt::UserRole, recipe.chosen);
     } else {
         item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-отмена-512.png").scaled(30, 30, Qt::KeepAspectRatio));
         item->setText("Не избранное");
@@ -94,14 +108,24 @@ void MainWindow::insert_recipies(QTableWidget* table, QSqlQuery& recipe) {
     table->setRowHeight(row, 30);
     table->setItem(row, 2, item);
     item = new QTableWidgetItem;
-    item->setText(recipe.value("name").toString());
+    item->setText(recipe.name);
     table->setItem(row, 1, item);
     item = new QTableWidgetItem;
-    item->setText(recipe.value("id").toString());
+    item->setText(recipe.id);
     table->setItem(row, 0, item);
 }
 
-void MainWindow::update_category(QString category_name) { //Не работает.
+void MainWindow::insert_recipies(QTableWidget* table, QSqlQuery query) {
+    Recipe recipe{};
+    recipe.id          = query.value("id").toString();
+    recipe.category_id = query.value("category_id").toString();
+    recipe.algorithm   = query.value("algorithm").toString();
+    recipe.chosen      = query.value("chosen").toBool();
+    recipe.name        = query.value("name").toString();
+    insert_recipies(table, recipe);
+}
+
+void MainWindow::update_category(QString category_name) {
     int category_index = 0;
     while (ui_->categories_tool_->itemText(category_index) != category_name) {
         if (ui_->categories_tool_->count() - 1 < category_index) { //Если не нашли нужную категорию
