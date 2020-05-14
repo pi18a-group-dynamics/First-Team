@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>379</height>
+    <width>481</width>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>253</width>
-           <height>280</height>
+           <width>195</width>
+           <height>260</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -51,8 +51,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>235</width>
-               <height>231</height>
+               <width>177</width>
+               <height>211</height>
               </rect>
              </property>
              <attribute name="icon">
@@ -179,7 +179,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>539</width>
+     <width>481</width>
      <height>22</height>
     </rect>
    </property>
@@ -191,13 +191,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="change_rec_"/>
     <addaction name="erase_rec_"/>
    </widget>
-   <widget class="QMenu" name="categories_menu_">
-    <property name="title">
-     <string>Категории</string>
-    </property>
-   </widget>
    <addaction name="recipes_menu_"/>
-   <addaction name="categories_menu_"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="push_rec_">

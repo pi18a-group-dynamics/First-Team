@@ -17,8 +17,12 @@ Picture::Picture(QPixmap pixmap)
 }
 
 void Picture::set_pixmap(QPixmap pixmap) {
-    pixmap_ = pixmap;
+    pixmap_ = std::move(pixmap);
     update();
+}
+
+QPixmap& Picture::get_pixmap() {
+    return pixmap_;
 }
 
 void Picture::paintEvent(QPaintEvent *event) {

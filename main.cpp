@@ -2,7 +2,6 @@
 #include "ingredients.h"
 #include <QApplication>
 #include <iostream>
-<<<<<<< HEAD
 #include <QByteArray>
 #include <QBuffer>
 #include <QPixmap>
@@ -11,18 +10,9 @@
 #include <QSqlQuery>
 
 int main(int argc, char *argv[]) try {
-      QApplication a(argc, argv);
-    MainWindow w;
-=======
-#include "categories.h"
-int main(int argc, char *argv[]) try {
     QApplication a(argc, argv);
-    Categories w;
-
->>>>>>> categories_form
-
+    MainWindow w;
     w.show();
-
 //    QSqlDatabase database_;
 //    database_ = QSqlDatabase::addDatabase("QPSQL");
 //    database_.setPort(5432);

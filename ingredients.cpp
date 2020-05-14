@@ -123,3 +123,4 @@ void Ingredients::on_change_ingr_btn__clicked() {
 void Ingredients::on_close_btn__clicked() {
     close();
 }
+

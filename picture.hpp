@@ -11,6 +11,7 @@ public:
     explicit Picture(QWidget * = nullptr);
     explicit Picture(QPixmap);
     void set_pixmap(QPixmap);
+    QPixmap& get_pixmap();
 protected:
     void paintEvent(QPaintEvent*) override;
 private:

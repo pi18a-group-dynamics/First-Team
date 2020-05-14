@@ -12,7 +12,9 @@
 #include <QAbstractItemModel>
 #include <QDebug>
 #include <QListView>
+#include <type_traits>
 #include "ingredients.h"
+#include "categories.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -178,19 +180,25 @@ void MainWindow::init_form() {
             insert_recipies(table, recipies);
         }
     }
-    QAction* action = new QAction;
-    action->setText("Ингредиенты");
-    connect(action, &QAction::triggered, [this, action]() {
-        Ingredients* ingredients = new Ingredients;
-        QObject::connect(ingredients, &Ingredients::category_change, this, &MainWindow::update_category);
-        ingredients->setAttribute(Qt::WA_DeleteOnClose);
-        action->setEnabled(false);
-        ingredients->show();
-        QObject::connect(ingredients, &Ingredients::destroyed, [action]() {
-            action->setEnabled(true);
+    auto create_action = [this](auto form, QString name, QMenu* menubar = nullptr, bool is_delete_on_close = true) {
+        QAction* action = new QAction;
+        action->setText(name);
+        connect(action, &QAction::triggered, [this, action, form, is_delete_on_close]() mutable {
+            if (is_delete_on_close) {
+                form = new std::remove_pointer_t<decltype(form)>;
+                form->setAttribute(Qt::WA_DeleteOnClose);
+            }
+            QObject::connect(form, &std::remove_pointer_t<decltype(form)>::category_change, this, &MainWindow::update_category);
+            action->setEnabled(false);
+            form->show();
+            QObject::connect(form, &Ingredients::destroyed, [action]() {
+                action->setEnabled(true);
+            });
         });
-    });
-    ui_->menubar->addAction(action);
+        menubar ? menubar->addAction(action) : ui_->menubar->addAction(action);
+    };
+    create_action(static_cast<Categories*>(nullptr), "Категории");
+    create_action(static_cast<Ingredients*>(nullptr), "Ингридиенты");
 }
 
 MainWindow::~MainWindow() {
