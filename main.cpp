@@ -2,6 +2,7 @@
 #include "ingredients.h"
 #include <QApplication>
 #include <iostream>
+<<<<<<< HEAD
 #include <QByteArray>
 #include <QBuffer>
 #include <QPixmap>
@@ -12,6 +13,13 @@
 int main(int argc, char *argv[]) try {
       QApplication a(argc, argv);
     MainWindow w;
+=======
+#include "categories.h"
+int main(int argc, char *argv[]) try {
+    QApplication a(argc, argv);
+    Categories w;
+
+>>>>>>> categories_form
 
     w.show();
 

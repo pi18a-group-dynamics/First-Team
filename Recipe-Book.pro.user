@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD
 <!-- Written by QtCreator 4.12.0, 2020-05-13T23:05:52. -->
+=======
+<!-- Written by QtCreator 4.10.0, 2020-05-14T13:34:50. -->
+>>>>>>> categories_form
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -318,7 +322,11 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
+<<<<<<< HEAD
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/kirill/QtProject/build-Recipe-Book-Desktop_Qt_5_14_2_GCC_64bit-Debug</value>
+=======
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/Проект/build-Recipe-Book-Desktop_Qt_5_13_1_MinGW_32_bit-Debug</value>
+>>>>>>> categories_form
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
