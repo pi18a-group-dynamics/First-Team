@@ -20,6 +20,8 @@ private slots:
 
     void on_erase_btn__clicked();
 
+    void on_change_btn__clicked();
+
 signals:
     void category_change(QString category_name);
 private:

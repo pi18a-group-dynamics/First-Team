@@ -1,9 +1,7 @@
 #include "categories.h"
 #include "ui_categories.h"
 #include <QFileDialog>
-#include <QByteArray>
 #include <QMessageBox>
-#include <QBuffer>
 #include <QSqlQuery>
 
 Categories::Categories(QWidget *parent)
@@ -43,7 +41,7 @@ void Categories::update_form() {
         item = new QTableWidgetItem;
         item->setData(Qt::UserRole, query.value("id"));
         item->setText(query.value("name").toString());
-        photo.loadFromData(query.value("photo").toByteArray(), "PNG");
+        photo = Picture::from_bytea(query.value("photo").toByteArray());
         if (!photo.isNull()) {
             item->setData(Qt::DecorationRole, photo.scaled(30, 30, Qt::KeepAspectRatio));
         }
@@ -70,11 +68,7 @@ void Categories::on_push_btn__clicked() {
                   ":name,"
                   ":photo);");
     query.bindValue(":name", ui_->name_line_->text());
-    QByteArray bytea;
-    QBuffer buffer(&bytea);
-    buffer.open(QIODevice::WriteOnly);
-    ui_->photo_->get_pixmap().save(&buffer, "PNG");
-    query.bindValue(":photo", bytea);
+    query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
     query.exec() ? QMessageBox::information(nullptr, "Успех", "Создана новая категория")
                  : QMessageBox::warning(nullptr, "Ошибка", "Такая категория уже существует");
     update_form();
@@ -88,10 +82,7 @@ void Categories::on_categories_table__clicked(const QModelIndex &index) {
     query.bindValue(":id", model->data(index, Qt::UserRole).toString());
     query.exec();
     if (query.next()) {
-        QByteArray bytea{query.value("photo").toByteArray()};
-        QPixmap photo;
-        photo.loadFromData(bytea, "PNG");
-        ui_->photo_->set_pixmap(std::move(photo));
+        ui_->photo_->set_pixmap(Picture::from_bytea(query.value("photo").toByteArray()));
     }
 }
 
@@ -108,4 +99,18 @@ void Categories::on_erase_btn__clicked() {
     query.bindValue(":id", category_id);
     query.exec() ? update_form(), QMessageBox::information(nullptr, "Успех", "Категория успешно удалена")
                  : QMessageBox::warning(nullptr, "Ошибка", "Ошибка удаления");
+}
+
+void Categories::on_change_btn__clicked() {
+    QTableWidget* table = ui_->categories_table_;
+    if (table->currentRow() == -1) {
+        QMessageBox::warning(nullptr, "Не удалось изменить", "Выберите запись");
+        return;
+    }
+    QSqlQuery query;
+    query.prepare("UPDATE categories SET name = :name, photo = :photo WHERE id = :id");
+    query.bindValue(":name", ui_->name_line_->text());
+    query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
+    query.bindValue(":id", table->currentItem()->data(Qt::UserRole));
+    update_form();
 }

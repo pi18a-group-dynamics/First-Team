@@ -6,8 +6,6 @@
 #include <QSqlQueryModel>
 #include <QTableWidget>
 #include <QPixmap>
-#include <QBuffer>
-#include <QByteArray>
 #include <QModelIndex>
 #include <QAbstractItemModel>
 #include <QDebug>
@@ -70,17 +68,11 @@ QTableWidget* MainWindow::create_category_table(QString category_name, QPixmap p
             ui_->ingredients_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
             ui_->ingredients_table_->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
             ui_->ingredients_table_->setShowGrid(false);
-            QByteArray bytea;
-            QBuffer buffer(&bytea);
-            buffer.open(QIODevice::ReadOnly);
             query.prepare("SELECT photo FROM recipe_photo WHERE id = :id");
             query.bindValue(":id", recipies_id);
             query.exec();
             if (query.next()) {
-                bytea = query.value("photo").toByteArray();
-                QPixmap photo;
-                photo.loadFromData(bytea, "PNG");
-                ui_->photo_->set_pixmap(photo);
+                ui_->photo_->set_pixmap(Picture::from_bytea(query.value("photo").toByteArray()));
             }
         } else if (index.column() == 2) {
             QSqlQuery query;
@@ -134,8 +126,7 @@ void MainWindow::update_category(QString category_name) {
     query.bindValue(":name", category_name);
     QPixmap photo;
     if (query.exec() && query.next()) {
-        QByteArray bytea = query.value("photo").toByteArray();
-        photo.loadFromData(bytea, "PNG");
+        photo = Picture::from_bytea(query.value("photo").toByteArray());
     }
     while (ui_->categories_tool_->itemText(category_index) != category_name) {
         if (ui_->categories_tool_->count() - 1 < category_index) { //Если не нашли нужную категорию
@@ -169,10 +160,8 @@ void MainWindow::init_form() {
     recipies.prepare("SELECT * FROM recipies WHERE category_id = :category_id ORDER BY chosen DESC, name;");
     QTableWidget* table;
     QPixmap photo;
-    QByteArray bytea;
     while (categories.next()) {
-        bytea = categories.value("photo").toByteArray();        
-        photo.loadFromData(bytea, "PNG");
+        photo = Picture::from_bytea(categories.value("photo").toByteArray());
         table = create_category_table(categories.value("name").toString(), photo);
         recipies.bindValue(":category_id", categories.value("id"));
         recipies.exec();
