@@ -70,7 +70,7 @@ void Categories::on_push_btn__clicked() {
     query.bindValue(":name", ui_->name_line_->text());
     query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
     query.exec() ? QMessageBox::information(nullptr, "Успех", "Создана новая категория")
-                 : QMessageBox::warning(nullptr, "Ошибка", "Такая категория уже существует");
+                 : QMessageBox::warning(nullptr, "Ошибка", "Пустое имя или такая категория уже существует");
     update_form();
 }
 
@@ -112,5 +112,7 @@ void Categories::on_change_btn__clicked() {
     query.bindValue(":name", ui_->name_line_->text());
     query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
     query.bindValue(":id", table->currentItem()->data(Qt::UserRole));
+    query.exec() ? QMessageBox::information(nullptr, "Категория успешно изменена", "Таблица категорий обновилась")
+                 : QMessageBox::warning(nullptr, "Не удалось изменить", "Пустое имя или такая категория уже существует");
     update_form();
 }
