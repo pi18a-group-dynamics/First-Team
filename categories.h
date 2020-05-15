@@ -22,6 +22,8 @@ private slots:
 
     void on_change_btn__clicked();
 
+    void on_erase_photo_btn__clicked();
+
 signals:
     void category_change(QString category_name);
     void all_update();

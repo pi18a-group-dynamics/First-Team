@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Категории</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -88,6 +88,13 @@
         <widget class="QPushButton" name="photo_btn_">
          <property name="text">
           <string>Выбрать фото</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="erase_photo_btn_">
+         <property name="text">
+          <string>Удалить фото</string>
          </property>
         </widget>
        </item>

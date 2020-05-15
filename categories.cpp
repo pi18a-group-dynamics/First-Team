@@ -30,7 +30,6 @@ void Categories::update_form() {
     QSqlQuery query;
     query.exec("SELECT * FROM categories ORDER BY name;");
     QTableWidget* table = ui_->categories_table_;
-    table->clear();
     table->setRowCount(0);
     QTableWidgetItem* item;
     QPixmap photo;
@@ -120,4 +119,8 @@ void Categories::on_change_btn__clicked() {
     query.exec() ? QMessageBox::information(nullptr, "Категория успешно изменена", "Таблица категорий обновилась")
                  : QMessageBox::warning(nullptr, "Не удалось изменить", "Пустое имя или такая категория уже существует");
     update_form();
+}
+
+void Categories::on_erase_photo_btn__clicked() {
+    ui_->photo_->set_pixmap(QPixmap());
 }
