@@ -1,5 +1,6 @@
 #include "picture.hpp"
 #include <QPaintEvent>
+#include <QBuffer>
 #include <QPainter>
 
 Picture::Picture() {
@@ -37,4 +38,18 @@ void Picture::paintEvent(QPaintEvent *event) {
     QPoint pixmap_point((size().width() - current_pixmap.width())/2, (size().height() - current_pixmap.height())/2);
     painter.drawPixmap(pixmap_point, current_pixmap);
     QLabel::paintEvent(event);
+}
+
+QByteArray Picture::to_bytea(const QPixmap &pixmap) {
+    QByteArray bytea;
+    QBuffer buffer(&bytea);
+    buffer.open(QIODevice::WriteOnly);
+    pixmap.save(&buffer, "PNG");
+    return bytea; //NRVO
+}
+
+QPixmap Picture::from_bytea(const QByteArray &bytea) {
+    QPixmap pixmap;
+    pixmap.loadFromData(bytea, "PNG");
+    return pixmap;
 }
