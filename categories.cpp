@@ -48,6 +48,7 @@ void Categories::update_form() {
         table->setItem(i, 0, item);
         table->setRowHeight(i, 30);
     }
+    emit all_update();
 }
 
 void Categories::on_photo_btn__clicked() {
@@ -97,8 +98,12 @@ void Categories::on_erase_btn__clicked() {
     QSqlQuery query;
     query.prepare("DELETE FROM categories WHERE id = :id;");
     query.bindValue(":id", category_id);
-    query.exec() ? update_form(), QMessageBox::information(nullptr, "Успех", "Категория успешно удалена")
-                 : QMessageBox::warning(nullptr, "Ошибка", "Ошибка удаления");
+    if (!query.exec()) {
+        QMessageBox::warning(nullptr, "Ошибка", "Ошибка удаления");
+        return;
+    }
+    update_form();
+    QMessageBox::information(nullptr, "Успех", "Категория успешно удалена");
 }
 
 void Categories::on_change_btn__clicked() {

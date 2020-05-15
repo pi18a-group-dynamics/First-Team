@@ -152,8 +152,11 @@ void MainWindow::update_category(QString category_name) {
     }
 }
 
-void MainWindow::init_form() {
-    ui_->categories_tool_->removeItem(0);
+void MainWindow::update_form() {
+    QToolBox* tool = ui_->categories_tool_;
+    while (tool->count()) {
+        tool->removeItem(0);
+    }
     QSqlQuery categories;
     categories.exec("SELECT * FROM categories ORDER BY name;");
     QSqlQuery recipies;
@@ -169,6 +172,10 @@ void MainWindow::init_form() {
             insert_recipies(table, recipies);
         }
     }
+}
+
+void MainWindow::init_form() {
+    update_form();
     auto create_action = [this](auto form, QString name, QMenu* menubar = nullptr, bool is_delete_on_close = true) {
         QAction* action = new QAction;
         action->setText(name);
@@ -178,6 +185,7 @@ void MainWindow::init_form() {
                 form->setAttribute(Qt::WA_DeleteOnClose);
             }
             QObject::connect(form, &std::remove_pointer_t<decltype(form)>::category_change, this, &MainWindow::update_category);
+            QObject::connect(form, &std::remove_pointer_t<decltype(form)>::all_update, this, &MainWindow::update_form);
             action->setEnabled(false);
             form->show();
             QObject::connect(form, &Ingredients::destroyed, [action]() {

@@ -24,6 +24,7 @@ private slots:
 
 signals:
     void category_change(QString category_name);
+    void all_update();
 private:
     void form_init();
     void update_form();

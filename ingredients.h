@@ -23,6 +23,7 @@ private slots:
     void on_close_btn__clicked();
 signals:
     void category_change(QString category_name);
+    void all_update();
 private:
     Ui::Ingredients* ui_;
     QSqlDatabase database_;

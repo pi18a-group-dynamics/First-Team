@@ -25,6 +25,7 @@ private:
     void insert_recipies(QTableWidget* table, QSqlQuery query);
 private slots:
     void update_category(QString category_name);        //Обновлнение одной категории (одного пункта)
+    void update_form();
 };
 
 struct MainWindow::Recipe {
