@@ -12,13 +12,13 @@ class Recipe : public QWidget {
     Q_OBJECT
 public:
     enum class OpenKey {push, change};
-    explicit Recipe(OpenKey, QWidget *parent = nullptr);
+    explicit Recipe(OpenKey, QVariant id = QVariant(), QWidget *parent = nullptr);
     ~Recipe();
 private:
     Ui::Recipe *ui_;
     void form_init();
     void push_init();
-    void change_init();
+    void change_init(QVariant);
 signals:
     void category_change(QString category_name);
     void all_update();
@@ -29,6 +29,7 @@ private slots:
     void on_insert_btn__clicked();
     void on_close_btn__clicked();
     void on_ingredients_table__clicked(const QModelIndex &index);
+    void on_erase_btn__clicked();
 };
 
 #endif // RECIPE_HPP

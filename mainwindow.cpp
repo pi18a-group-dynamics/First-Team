@@ -60,8 +60,8 @@ QTableWidget* MainWindow::create_category_table(QString category_name, QPixmap p
             QSqlQueryModel* model = new QSqlQueryModel;
             model->setQuery("SELECT "
                             "i.name AS \"Ингредиент\", "
-                            "CONCAT(CONCAT(CONCAT(ir.count, ' ('), i.meansurement), ')')"
-                            " AS \"Количество\" FROM ingredients_of_recipies ir "
+                            "CONCAT(CONCAT(ir.count, ' '), i.meansurement) "
+                            "AS \"Количество\" FROM ingredients_of_recipies ir "
                             "LEFT JOIN ingredients i ON ir.ingredient_id = i.id "
                             "WHERE recipe_id = \'" + recipies_id + "\';");
             ui_->ingredients_table_->setModel(model);
@@ -220,4 +220,21 @@ void MainWindow::on_erase_btn__clicked() {
     query.bindValue(":id", recipe_id);
     query.exec();
     update_category(category_name);
+}
+
+void MainWindow::on_open_btn__clicked() {
+    QTableWidget* table = dynamic_cast<QTableWidget*>(ui_->categories_tool_->currentWidget());
+    if (table->currentRow() == -1) {
+        QMessageBox::warning(nullptr, "Ошибка", "Выберите рецепт");
+        return;
+    }
+    QAbstractItemModel* model = table->model();
+    QString recipies_id = model->data(model->index(table->currentRow(), 0)).toString();
+    ::Recipe* recipe = new ::Recipe(::Recipe::OpenKey::change, recipies_id);
+    recipe->setAttribute(Qt::WA_DeleteOnClose);
+    connect(recipe, &QWidget::destroyed, [this]() {
+        ui_->open_btn_->setEnabled(true);
+    });
+    ui_->open_btn_->setEnabled(false);
+    recipe->show();
 }

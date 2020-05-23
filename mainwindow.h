@@ -27,6 +27,7 @@ private slots:
     void update_category(QString category_name);        //Обновлнение одной категории (одного пункта)
     void update_form();
     void on_erase_btn__clicked();
+    void on_open_btn__clicked();
 };
 
 struct MainWindow::Recipe {

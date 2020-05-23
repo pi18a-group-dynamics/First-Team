@@ -5,14 +5,17 @@
 #include "recipe.hpp"
 #include "ui_recipe.h"
 
-Recipe::Recipe(OpenKey key, QWidget *parent)
+Recipe::Recipe(OpenKey key, QVariant id, QWidget *parent)
 : QWidget(parent)
 , ui_(new Ui::Recipe) {
     ui_->setupUi(this);
     form_init();
     switch(key) {
-        case OpenKey::push:
-            push_init();
+    case OpenKey::push:
+        push_init();
+        break;
+    case OpenKey::change:
+        change_init(id);
         break;
     }
 }
@@ -58,6 +61,81 @@ void Recipe::push_init() {
        const QAbstractItemModel* model = table->model();
        query.prepare("INSERT INTO ingredients_of_recipies VALUES(default, :ingredient_id, :recipe_id, :count);");
        query.bindValue(":recipe_id", recipe_id);
+       for (int row = 0; row < table->rowCount(); ++row) {
+           query.bindValue(":ingredient_id", model->data(model->index(row, 0), Qt::UserRole));
+           query.bindValue(":count", model->data(model->index(row, 1), Qt::UserRole));
+           query.exec();
+       }
+    });
+}
+
+void Recipe::change_init(QVariant id) {
+    QSqlQuery query;
+
+    query.prepare("SELECT * FROM recipies WHERE id = :id");
+    query.bindValue(":id", id);
+    query.exec();
+    query.next();
+    ui_->name_line_->setText(query.value("name").toString());
+    QComboBox* box = ui_->categories_box_;
+    for (int i = 0; i< box->count(); ++i) {
+        if (box->itemData(i) == query.value("category_id")) {
+            box->setCurrentIndex(i);
+            break;
+        }
+    }
+    ui_->algorithm_text_->setPlainText(query.value("algorithm").toString());
+    query.prepare("SELECT * FROM ingredients_of_recipies JOIN ingredients i ON ingredient_id = i.id WHERE recipe_id = :id;");
+    query.bindValue(":id", id);
+    query.exec();
+    QTableWidget* table = ui_->ingredients_table_;
+    QTableWidgetItem* item = nullptr;
+    for (int row = 0; query.next(); ++row) {
+        table->setRowCount(row + 1);
+        item = new QTableWidgetItem;
+        item->setText(query.value("name").toString());
+        item->setData(Qt::UserRole, query.value("ingredient_id"));
+        table->setItem(row, 0, item);
+        item = new QTableWidgetItem;
+        item->setText(query.value("count").toString() + ' ' + query.value("meansurement").toString());
+        item->setData(Qt::UserRole, query.value("count").toInt());
+        table->setItem(row, 1, item);
+    }
+    query.prepare("SELECT photo FROM recipe_photo WHERE id = :id;");
+    query.bindValue(":id", id);
+    if (query.exec() && query.next()) {
+        ui_->photo_->set_pixmap(Picture::from_bytea(query.value(0).toByteArray()));
+    }
+    connect(ui_->save_btn_, &QPushButton::clicked, [this, id]() {
+       QSqlQuery query;
+       query.prepare("UPDATE recipies SET "
+                     "category_id = :category_id, "
+                     "algorithm = :algorithm, "
+                     "chosen = :chosen, "
+                     "name = :name "
+                     "WHERE id = :id;");
+       query.bindValue(":category_id", ui_->categories_box_->currentData());
+       query.bindValue(":algorithm", ui_->algorithm_text_->toPlainText());
+       query.bindValue(":chosen", false);
+       query.bindValue(":name", ui_->name_line_->text());
+       query.bindValue(":id", id);
+       query.exec();
+       emit category_change(ui_->categories_box_->currentText());
+       query.prepare("UPDATE recipe_photo SET photo = :photo WHERE id = :id;");
+       ui_->photo_->show();
+       query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
+       query.bindValue(":id", id);
+       if (!query.exec()) {
+           qDebug() << query.lastQuery();
+           qDebug() << query.lastError().text();
+       }
+       QTableWidget* table = ui_->ingredients_table_;
+       const QAbstractItemModel* model = table->model();
+       query.prepare("DELETE FROM ingredients_of_recipies WHERE recipe_id = :id;");
+       query.bindValue(":id", id);
+       query.exec();
+       query.prepare("INSERT INTO ingredients_of_recipies VALUES(default, :ingredient_id, :recipe_id, :count);");
+       query.bindValue(":recipe_id", id);
        for (int row = 0; row < table->rowCount(); ++row) {
            query.bindValue(":ingredient_id", model->data(model->index(row, 0), Qt::UserRole));
            query.bindValue(":count", model->data(model->index(row, 1), Qt::UserRole));
@@ -122,4 +200,9 @@ void Recipe::on_ingredients_table__clicked(const QModelIndex &index) {
     const QAbstractItemModel* model = index.model();
     box->setCurrentIndex(box->findData(model->data(model->index(index.row(), 0), Qt::UserRole)));
     ui_->ingredient_spin_->setValue(model->data(model->index(index.row(), 1), Qt::UserRole).toInt());
+}
+
+void Recipe::on_erase_btn__clicked() {
+    QTableWidget* table = ui_->ingredients_table_;
+    table->removeRow(table->currentRow());
 }
