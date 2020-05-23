@@ -179,7 +179,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QPlainTextEdit" name="plainTextEdit"/>
+      <widget class="QPlainTextEdit" name="algorithm_text_"/>
      </item>
     </layout>
    </item>

@@ -11,11 +11,14 @@ class Recipe;
 class Recipe : public QWidget {
     Q_OBJECT
 public:
-    explicit Recipe(QWidget *parent = nullptr);
+    enum class OpenKey {push, change};
+    explicit Recipe(OpenKey, QWidget *parent = nullptr);
     ~Recipe();
 private:
     Ui::Recipe *ui_;
     void form_init();
+    void push_init();
+    void change_init();
 signals:
     void category_change(QString category_name);
     void all_update();

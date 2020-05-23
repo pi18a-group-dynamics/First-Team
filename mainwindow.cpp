@@ -177,14 +177,12 @@ void MainWindow::update_form() {
 
 void MainWindow::init_form() {
     update_form();
-    auto create_action = [this](auto form, QString name, bool is_delete_on_close = true) {
+    auto create_action = [this](auto form, QString name, auto&&... args) {
         QAction* action = new QAction;
         action->setText(name);
-        connect(action, &QAction::triggered, [this, action, form, is_delete_on_close]() mutable {
-            if (is_delete_on_close) {
-                form = new std::remove_pointer_t<decltype(form)>;
-                form->setAttribute(Qt::WA_DeleteOnClose);
-            }
+        connect(action, &QAction::triggered, [this, action, form, args...]() mutable {
+            form = new std::remove_pointer_t<decltype(form)>(args...);
+            form->setAttribute(Qt::WA_DeleteOnClose);
             QObject::connect(form, &std::remove_pointer_t<decltype(form)>::category_change, this, &MainWindow::update_category);
             QObject::connect(form, &std::remove_pointer_t<decltype(form)>::all_update, this, &MainWindow::update_form);
             action->setEnabled(false);
@@ -195,7 +193,7 @@ void MainWindow::init_form() {
         });
         ui_->menubar->addAction(action);
     };
-    create_action(static_cast<::Recipe*>(nullptr), "Рецепты");
+    create_action(static_cast<::Recipe*>(nullptr), "Рецепты", ::Recipe::OpenKey::push);
     create_action(static_cast<Categories*>(nullptr), "Категории");
     create_action(static_cast<Ingredients*>(nullptr), "Ингридиенты");
 }

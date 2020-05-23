@@ -5,11 +5,16 @@
 #include "recipe.hpp"
 #include "ui_recipe.h"
 
-Recipe::Recipe(QWidget *parent)
+Recipe::Recipe(OpenKey key, QWidget *parent)
 : QWidget(parent)
 , ui_(new Ui::Recipe) {
     ui_->setupUi(this);
     form_init();
+    switch(key) {
+        case OpenKey::push:
+            push_init();
+        break;
+    }
 }
 
 void Recipe::form_init() {
@@ -30,6 +35,36 @@ void Recipe::form_init() {
     while (ingredients.next()) {
         ui_->ingredient_combo_->addItem(ingredients.value("name").toString(), ingredients.value("id"));
     }
+}
+
+void Recipe::push_init() {
+    connect(ui_->save_btn_, &QPushButton::clicked, [this]() {
+       QSqlQuery query;
+       QVariant recipe_id;
+       query.prepare("INSERT INTO recipies VALUES(default, :category_id, :algorithm, :chosen, :name) RETURNING id;");
+       query.bindValue(":category_id", ui_->categories_box_->currentData());
+       query.bindValue(":algorithm", ui_->algorithm_text_->toPlainText());
+       query.bindValue(":chosen", false);
+       query.bindValue(":name", ui_->name_line_->text());
+       query.exec();
+       query.next();
+       recipe_id = query.value(0);
+       emit category_change(ui_->categories_box_->currentText());
+       query.prepare("INSERT INTO recipe_photo VALUES(:id, :photo);");
+       query.bindValue(":id", recipe_id);
+       query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
+       query.exec();
+
+       QTableWidget* table = ui_->ingredients_table_;
+       const QAbstractItemModel* model = table->model();
+       query.prepare("INSERT INTO ingredients_of_recipies VALUES(default, :ingredient_id, :recipe_id, :count);");
+       query.bindValue(":recipe_id", recipe_id);
+       for (int row = 0; row < table->rowCount(); ++row) {
+           query.bindValue(":ingredient_id", model->data(model->index(row, 0), Qt::UserRole));
+           query.bindValue(":count", model->data(model->index(row, 1), Qt::UserRole));
+           query.exec();
+       }
+    });
 }
 
 Recipe::~Recipe() {
