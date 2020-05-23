@@ -95,11 +95,11 @@ void MainWindow::insert_recipies(QTableWidget* table, const Recipe& recipe) {
     if (recipe.chosen) {
         item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-проверено-512.png").scaled(30, 30, Qt::KeepAspectRatio));
         item->setText("Избранный");
-        item->setData(Qt::UserRole, recipe.chosen);
     } else {
         item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-отмена-512.png").scaled(30, 30, Qt::KeepAspectRatio));
         item->setText("Не избранное");
     }
+    item->setData(Qt::UserRole, recipe.chosen);
     table->setRowHeight(row, 30);
     table->setItem(row, 2, item);
     item = new QTableWidgetItem;
@@ -177,7 +177,7 @@ void MainWindow::update_form() {
 
 void MainWindow::init_form() {
     update_form();
-    auto create_action = [this](auto form, QString name, QMenu* menubar = nullptr, bool is_delete_on_close = true) {
+    auto create_action = [this](auto form, QString name, bool is_delete_on_close = true) {
         QAction* action = new QAction;
         action->setText(name);
         connect(action, &QAction::triggered, [this, action, form, is_delete_on_close]() mutable {
@@ -193,7 +193,7 @@ void MainWindow::init_form() {
                 action->setEnabled(true);
             });
         });
-        menubar ? menubar->addAction(action) : ui_->menubar->addAction(action);
+        ui_->menubar->addAction(action);
     };
     create_action(static_cast<::Recipe*>(nullptr), "Рецепты");
     create_action(static_cast<Categories*>(nullptr), "Категории");

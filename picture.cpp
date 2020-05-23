@@ -4,7 +4,6 @@
 #include <QPainter>
 
 Picture::Picture() {
-
 }
 
 Picture::Picture(QWidget* parent)
