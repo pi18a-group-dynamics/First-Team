@@ -151,6 +151,9 @@ void MainWindow::update_category(QString category_name) {
     while (recipies.next()) {
         insert_recipies(&table, recipies);
     }
+    ui_->photo_->set_pixmap(QPixmap());
+    ui_->algorithm_text_->clear();
+    ui_->ingredients_table_->setModel(nullptr);
 }
 
 void MainWindow::update_form() {
@@ -201,4 +204,20 @@ void MainWindow::init_form() {
 MainWindow::~MainWindow() {
     delete ui_;
     database_.close();
+}
+
+void MainWindow::on_erase_btn__clicked() {
+    QModelIndex index = dynamic_cast<QTableWidget*>(ui_->categories_tool_->currentWidget())->currentIndex();
+    const QAbstractItemModel* model = index.model();
+    QString recipe_id = model->data(model->index(index.row(), 0)).toString();
+    QSqlQuery query;
+    query.prepare("SELECT c.name FROM recipies r JOIN categories c ON r.category_id = c.id WHERE r.id = :id;");
+    query.bindValue(":id", recipe_id);
+    query.exec();
+    query.next();
+    QString category_name = query.value(0).toString();
+    query.prepare("DELETE FROM recipies WHERE id = :id;");
+    query.bindValue(":id", recipe_id);
+    query.exec();
+    update_category(category_name);
 }

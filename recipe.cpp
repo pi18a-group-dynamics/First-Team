@@ -54,7 +54,6 @@ void Recipe::push_init() {
        query.bindValue(":id", recipe_id);
        query.bindValue(":photo", Picture::to_bytea(ui_->photo_->get_pixmap()));
        query.exec();
-
        QTableWidget* table = ui_->ingredients_table_;
        const QAbstractItemModel* model = table->model();
        query.prepare("INSERT INTO ingredients_of_recipies VALUES(default, :ingredient_id, :recipe_id, :count);");
