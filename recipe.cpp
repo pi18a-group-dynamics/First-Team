@@ -2,6 +2,7 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "recipe.hpp"
 #include "ui_recipe.h"
 
@@ -66,16 +67,17 @@ void Recipe::push_init() {
            query.bindValue(":count", model->data(model->index(row, 1), Qt::UserRole));
            query.exec();
        }
+       QMessageBox::information(nullptr, "Успех", "Рецепт успешно добавлен");
     });
 }
 
 void Recipe::change_init(QVariant id) {
     QSqlQuery query;
-
-    query.prepare("SELECT * FROM recipies WHERE id = :id");
+    query.prepare("SELECT r.*, c.name AS category_name FROM recipies r JOIN categories c ON c.id = category_id WHERE r.id = :id");
     query.bindValue(":id", id);
     query.exec();
     query.next();
+    QString prev_category = query.value("category_name").toString();
     ui_->name_line_->setText(query.value("name").toString());
     QComboBox* box = ui_->categories_box_;
     for (int i = 0; i< box->count(); ++i) {
@@ -106,7 +108,7 @@ void Recipe::change_init(QVariant id) {
     if (query.exec() && query.next()) {
         ui_->photo_->set_pixmap(Picture::from_bytea(query.value(0).toByteArray()));
     }
-    connect(ui_->save_btn_, &QPushButton::clicked, [this, id]() {
+    connect(ui_->save_btn_, &QPushButton::clicked, [this, id, prev_category]() {
        QSqlQuery query;
        query.prepare("UPDATE recipies SET "
                      "category_id = :category_id, "
@@ -120,6 +122,7 @@ void Recipe::change_init(QVariant id) {
        query.bindValue(":name", ui_->name_line_->text());
        query.bindValue(":id", id);
        query.exec();
+       emit category_change(prev_category);
        emit category_change(ui_->categories_box_->currentText());
        query.prepare("UPDATE recipe_photo SET photo = :photo WHERE id = :id;");
        ui_->photo_->show();
@@ -141,6 +144,7 @@ void Recipe::change_init(QVariant id) {
            query.bindValue(":count", model->data(model->index(row, 1), Qt::UserRole));
            query.exec();
        }
+       QMessageBox::information(nullptr, "Успех", "Рецепт успешно изменён");
     });
 }
 

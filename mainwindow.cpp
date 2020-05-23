@@ -207,6 +207,15 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_erase_btn__clicked() {
+    QMessageBox question;
+    question.setWindowTitle("Подтвердите удаление");
+    question.setText("Удалить рецепт?");
+    question.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    question.setButtonText(QMessageBox::Yes, "Удалить");
+    question.setButtonText(QMessageBox::No, "Не удалять");
+    if (question.exec() == QMessageBox::No) {
+        return;
+    }
     QModelIndex index = dynamic_cast<QTableWidget*>(ui_->categories_tool_->currentWidget())->currentIndex();
     const QAbstractItemModel* model = index.model();
     QString recipe_id = model->data(model->index(index.row(), 0)).toString();
@@ -235,6 +244,7 @@ void MainWindow::on_open_btn__clicked() {
     connect(recipe, &QWidget::destroyed, [this]() {
         ui_->open_btn_->setEnabled(true);
     });
+    connect(recipe, &::Recipe::category_change, this, &MainWindow::update_category);
     ui_->open_btn_->setEnabled(false);
     recipe->show();
 }
