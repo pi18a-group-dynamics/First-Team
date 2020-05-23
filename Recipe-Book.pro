@@ -20,18 +20,21 @@ SOURCES += \
     ingredients.cpp \
     main.cpp \
     mainwindow.cpp \
-    picture.cpp
+    picture.cpp \
+    recipe.cpp
 
 HEADERS += \
     categories.h \
     ingredients.h \
     mainwindow.h \
-    picture.hpp
+    picture.hpp \
+    recipe.hpp
 
 FORMS += \
     categories.ui \
     ingredients.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    recipe.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

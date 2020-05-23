@@ -13,6 +13,7 @@
 #include <type_traits>
 #include "ingredients.h"
 #include "categories.h"
+#include "recipe.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -194,6 +195,7 @@ void MainWindow::init_form() {
         });
         menubar ? menubar->addAction(action) : ui_->menubar->addAction(action);
     };
+    create_action(static_cast<::Recipe*>(nullptr), "Рецепты");
     create_action(static_cast<Categories*>(nullptr), "Категории");
     create_action(static_cast<Ingredients*>(nullptr), "Ингридиенты");
 }

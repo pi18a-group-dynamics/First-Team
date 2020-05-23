@@ -183,32 +183,8 @@ p, li { white-space: pre-wrap; }
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="recipes_menu_">
-    <property name="title">
-     <string>Рецепты</string>
-    </property>
-    <addaction name="push_rec_"/>
-    <addaction name="change_rec_"/>
-    <addaction name="erase_rec_"/>
-   </widget>
-   <addaction name="recipes_menu_"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="push_rec_">
-   <property name="text">
-    <string>Добавить</string>
-   </property>
-  </action>
-  <action name="change_rec_">
-   <property name="text">
-    <string>Изменить</string>
-   </property>
-  </action>
-  <action name="erase_rec_">
-   <property name="text">
-    <string>Удалить</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
