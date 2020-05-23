@@ -21,7 +21,9 @@ private slots:
     void on_erase_ingr_btn__clicked();
     void on_change_ingr_btn__clicked();
     void on_close_btn__clicked();
-
+signals:
+    void category_change(QString category_name);
+    void all_update();
 private:
     Ui::Ingredients* ui_;
     QSqlDatabase database_;
