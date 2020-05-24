@@ -250,6 +250,40 @@ void MainWindow::on_open_btn__clicked() {
     recipe->show();
 }
 
-void MainWindow::on_filter_btn__clicked() {
-    (new Filter)->show();
+void MainWindow::set_filter(QString query) {
+    while (ui_->categories_tool_->count()) {
+        ui_->categories_tool_->removeItem(0);
+    }
+    QSqlQuery categories;
+    categories.exec("SELECT * FROM categories ORDER BY name;");
+    QSqlQuery recipies;
+    recipies.prepare(query);
+    QTableWidget* table;
+    QPixmap photo;
+    while (categories.next()) {
+        recipies.bindValue(":category_id", categories.value("id"));
+        recipies.exec();
+        qDebug() << recipies.lastQuery();
+        qDebug() << categories.value("id").toString();
+        qDebug() << recipies.size();
+        if (!recipies.size()) {
+            continue;
+        }
+        photo = Picture::from_bytea(categories.value("photo").toByteArray());
+        table = create_category_table(categories.value("name").toString(), photo);
+        while (recipies.next()) {
+            insert_recipies(table, recipies);
+        }
+    }
 }
+
+void MainWindow::on_filter_btn__clicked() {
+    Filter* filter = new Filter;
+    filter->setAttribute(Qt::WA_DeleteOnClose);
+    connect(filter, &Filter::filter_change, this, &MainWindow::set_filter);
+    ui_->filter_btn_->setEnabled(false);
+    connect(filter, &QWidget::destroyed, [this]() {ui_->filter_btn_->setEnabled(true); });
+    filter->show();
+}
+
+

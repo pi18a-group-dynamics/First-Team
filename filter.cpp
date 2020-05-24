@@ -54,7 +54,7 @@ void Filter::form_init() {
         table->setItem(row, 0, item);
     }
     //ingredients init left table
-    query.exec("SELECT * FROM ingredients ORDER BY name;");
+    query.exec("SELECT id, CONCAT(CONCAT(CONCAT(name, ' ('), meansurement), ')') AS name FROM ingredients ORDER BY name;");
     table = ui_->left_ingredients_;
     table->setColumnCount(1);
     table->horizontalHeader()->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
@@ -92,4 +92,31 @@ void Filter::on_inser_ingredient__clicked() {
 
 void Filter::on_erase_ingredient__clicked() {
     rows_move(ui_->right_ingredients_, ui_->left_ingredients_, ui_->right_ingredients_->selectedItems());
+}
+
+void Filter::on_filter_btn__clicked() {
+    QString query = "SELECT * FROM recipies r WHERE TRUE";
+    if (QTableWidget* table = ui_->right_category_; table->rowCount()) {
+        query += " AND category_id IN (";
+        for (int i = 0; i < table->rowCount(); ++i) {
+            query += table->item(i, 0)->data(Qt::UserRole).toString() + ',';
+        }
+        query.back() = ')';
+    }
+    if (QTableWidget* table = ui_->right_ingredients_; table->rowCount()) {
+        query += " AND r.id IN (SELECT recipe_id FROM ingredients_of_recipies ir WHERE ir.ingredient_id IN (";
+        for (int i = 0; i < table->rowCount(); ++i) {
+            query += table->item(i, 0)->data(Qt::UserRole).toString() + ',';
+        }
+        query.back() = ')';
+        query += ')';
+    }
+    if (QString name = ui_->name_line_->text(); !name.isEmpty()) {
+        query += " AND name = \'" + name + '\'';
+    }
+    if (QString algorithm = ui_->algorithm_text_->toPlainText(); !algorithm.isEmpty()) {
+        query += " AND algorithm = \'" + algorithm + '\'';
+    }
+    query += " AND category_id = :category_id;";
+    emit filter_change(std::move(query));
 }

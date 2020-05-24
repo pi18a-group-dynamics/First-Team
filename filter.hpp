@@ -16,13 +16,12 @@ public:
 private slots:
     void on_close_btn__clicked();
     void on_inser_category__clicked();
-
     void on_erase_category__clicked();
-
     void on_inser_ingredient__clicked();
-
     void on_erase_ingredient__clicked();
-
+    void on_filter_btn__clicked();
+signals:
+    void filter_change(QString);
 private:
     Ui::Filter *ui_;
     void form_init();
