@@ -160,7 +160,7 @@ ALTER SEQUENCE public.ingredients_of_recipies_id_seq OWNED BY public.ingredients
 
 CREATE TABLE public.recipe_photo (
     id integer NOT NULL,
-    photo bytea NOT NULL
+    photo bytea
 );
 
 
@@ -174,7 +174,8 @@ CREATE TABLE public.recipies (
     id integer NOT NULL,
     category_id integer,
     algorithm text,
-    chosen boolean
+    chosen boolean,
+    name character varying(255)
 );
 
 
@@ -243,6 +244,16 @@ COPY public.categories (id, name, photo) FROM stdin;
 --
 
 COPY public.ingredients (id, name, meansurement) FROM stdin;
+16	Мука	г.
+17	Масло сливочное	г.
+18	Яйца	шт.
+19	Вода холодная	мл.
+20	Коньяк	ст. л.
+21	Уксус	ст. л.
+22	Соль	щепотка
+23	Молоко	л.
+24	Сахар	г.
+25	Ванильный сахар	г.
 \.
 
 
@@ -266,7 +277,7 @@ COPY public.recipe_photo (id, photo) FROM stdin;
 -- Data for Name: recipies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.recipies (id, category_id, algorithm, chosen) FROM stdin;
+COPY public.recipies (id, category_id, algorithm, chosen, name) FROM stdin;
 \.
 
 
@@ -274,28 +285,28 @@ COPY public.recipies (id, category_id, algorithm, chosen) FROM stdin;
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.categories_id_seq', 1, false);
+SELECT pg_catalog.setval('public.categories_id_seq', 29, true);
 
 
 --
 -- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ingredients_id_seq', 1, true);
+SELECT pg_catalog.setval('public.ingredients_id_seq', 25, true);
 
 
 --
 -- Name: ingredients_of_recipies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ingredients_of_recipies_id_seq', 1, true);
+SELECT pg_catalog.setval('public.ingredients_of_recipies_id_seq', 93, true);
 
 
 --
 -- Name: recipies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.recipies_id_seq', 1, true);
+SELECT pg_catalog.setval('public.recipies_id_seq', 167, true);
 
 
 --
@@ -328,6 +339,21 @@ ALTER TABLE ONLY public.ingredients
 
 ALTER TABLE ONLY public.recipies
     ADD CONSTRAINT recipies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: categories unique_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT unique_name UNIQUE (name);
+
+
+--
+-- Name: categories_name_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX categories_name_idx ON public.categories USING hash (name);
 
 
 --
