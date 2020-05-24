@@ -78,12 +78,26 @@ void Ingredients::on_erase_ingr_btn__clicked() {
         return;
     }
     QSqlQuery query;
+    query.prepare("SELECT count(*) FROM ingredients_of_recipies WHERE ingredient_id = :ingredient_id;");
+    query.bindValue(":ingredient_id", current_id);
+    query.exec();
+    query.next();
+    QMessageBox question;
+    question.setWindowTitle("Подтвердите удаление");
+    question.setText("При удалении ингридиента удалится " + query.value("count").toString() + " рецептов.\n"
+                     "Удалить?");
+    question.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    question.setButtonText(QMessageBox::Yes, "Удалить");
+    question.setButtonText(QMessageBox::No, "Не удалять");
+    if (question.exec() == QMessageBox::No) {
+        return;
+    }
     query.prepare("SELECT DISTINCT c.name FROM ingredients_of_recipies ir "
                   "LEFT JOIN recipies r ON ir.recipe_id = r.id            "
                   "LEFT JOIN categories c ON r.category_id = c.id         "
                   "WHERE ir.ingredient_id = :ingredient_id;");
     query.bindValue(":ingredient_id", current_id);
-    query.exec();   //Получение всег категорий (ДО УДАЛЕНИЯ ИНГРИДИЕНТА (СРАБАТЫВАЕТ ТРИГГЕР И НЕВОЗМОЖНО ПОЛУЧИТЬ КАТЕГОРИЮ РЕЦЕПТА КОТОРОГО НЕТ)!!!!)
+    query.exec();   //Получение всех категорий (ДО УДАЛЕНИЯ ИНГРИДИЕНТА (СРАБАТЫВАЕТ ТРИГГЕР И НЕВОЗМОЖНО ПОЛУЧИТЬ КАТЕГОРИЮ РЕЦЕПТА КОТОРОГО НЕТ)!!!!)
     if (!QSqlQuery().exec("DELETE FROM ingredients WHERE id = " + current_id + ';')) {
         QMessageBox::warning(nullptr, "Не удалось удалить", "Запись не обнаружена");
         return;
