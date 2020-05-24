@@ -263,9 +263,6 @@ void MainWindow::set_filter(QString query) {
     while (categories.next()) {
         recipies.bindValue(":category_id", categories.value("id"));
         recipies.exec();
-        qDebug() << recipies.lastQuery();
-        qDebug() << categories.value("id").toString();
-        qDebug() << recipies.size();
         if (!recipies.size()) {
             continue;
         }
@@ -281,6 +278,7 @@ void MainWindow::on_filter_btn__clicked() {
     Filter* filter = new Filter;
     filter->setAttribute(Qt::WA_DeleteOnClose);
     connect(filter, &Filter::filter_change, this, &MainWindow::set_filter);
+    connect(filter, &Filter::default_filter, this, &MainWindow::update_form);
     ui_->filter_btn_->setEnabled(false);
     connect(filter, &QWidget::destroyed, [this]() {ui_->filter_btn_->setEnabled(true); });
     filter->show();

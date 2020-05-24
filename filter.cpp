@@ -31,9 +31,11 @@ void Filter::form_init() {
     ui_->right_category_->setColumnCount(1);
     ui_->right_category_->horizontalHeader()->setSelectionMode(QAbstractItemView::SingleSelection);
     ui_->right_category_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui_->right_category_->setHorizontalHeaderLabels({"Выбранные категории"});
     ui_->right_ingredients_->setColumnCount(1);
     ui_->right_ingredients_->horizontalHeader()->setSelectionMode(QAbstractItemView::SingleSelection);
     ui_->right_ingredients_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui_->right_ingredients_->setHorizontalHeaderLabels({"Выбранные ингредиенты"});
     //category init left table
     QSqlQuery query;
     query.exec("SELECT * FROM categories ORDER BY name;");
@@ -42,6 +44,7 @@ void Filter::form_init() {
     table->setColumnCount(1);
     table->horizontalHeader()->setSelectionMode(QAbstractItemView::SingleSelection);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->setHorizontalHeaderLabels({"Доступные категории"});
     int row = 0;
     while (query.next()) {
         item = new QTableWidgetItem;
@@ -59,6 +62,7 @@ void Filter::form_init() {
     table->setColumnCount(1);
     table->horizontalHeader()->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->setHorizontalHeaderLabels({"Доступные ингредиенты"});
     row = 0;
     while (query.next()) {
         item = new QTableWidgetItem;
@@ -117,6 +121,10 @@ void Filter::on_filter_btn__clicked() {
     if (QString algorithm = ui_->algorithm_text_->toPlainText(); !algorithm.isEmpty()) {
         query += " AND algorithm = \'" + algorithm + '\'';
     }
-    query += " AND category_id = :category_id;";
+    query += " AND category_id = :category_id ORDER BY r.name;";
     emit filter_change(std::move(query));
+}
+
+void Filter::on_default_btn__clicked() {
+    emit default_filter();
 }
