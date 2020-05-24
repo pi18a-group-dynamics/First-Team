@@ -208,6 +208,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_erase_btn__clicked() {
+    if (ui_->categories_tool_->currentIndex() == -1 ||
+        dynamic_cast<QTableWidget*>(ui_->categories_tool_->currentWidget())->currentRow() == -1) {
+        QMessageBox::warning(nullptr, "Ошибка", "Выберите рецепт");
+        return;
+    }
     QMessageBox question;
     question.setWindowTitle("Подтвердите удаление");
     question.setText("Удалить рецепт?");
@@ -234,7 +239,7 @@ void MainWindow::on_erase_btn__clicked() {
 
 void MainWindow::on_open_btn__clicked() {
     QTableWidget* table = dynamic_cast<QTableWidget*>(ui_->categories_tool_->currentWidget());
-    if (table->currentRow() == -1) {
+    if (ui_->categories_tool_->currentIndex() == -1 || table->currentRow() == -1) {
         QMessageBox::warning(nullptr, "Ошибка", "Выберите рецепт");
         return;
     }
