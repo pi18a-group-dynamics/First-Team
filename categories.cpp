@@ -95,6 +95,20 @@ void Categories::on_erase_btn__clicked() {
     }
     QString category_id = table->item(current_index, 0)->data(Qt::UserRole).toString();
     QSqlQuery query;
+    query.prepare("SELECT count(*) FROM recipies WHERE category_id = :category_id;");
+    query.bindValue(":category_id", category_id);
+    query.exec();
+    query.next();
+    QMessageBox question;
+    question.setWindowTitle("Подтвердите удаление");
+    question.setText("При удалении категории удалится " + query.value("count").toString() + " рецептов.\n"
+                     "Удалить?");
+    question.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    question.setButtonText(QMessageBox::Yes, "Удалить");
+    question.setButtonText(QMessageBox::No, "Не удалять");
+    if (question.exec() == QMessageBox::No) {
+        return;
+    }
     query.prepare("DELETE FROM categories WHERE id = :id;");
     query.bindValue(":id", category_id);
     if (!query.exec()) {
