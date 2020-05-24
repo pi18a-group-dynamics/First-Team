@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     categories.cpp \
+    filter.cpp \
     ingredients.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 
 HEADERS += \
     categories.h \
+    filter.hpp \
     ingredients.h \
     mainwindow.h \
     picture.hpp \
@@ -32,6 +34,7 @@ HEADERS += \
 
 FORMS += \
     categories.ui \
+    filter.ui \
     ingredients.ui \
     mainwindow.ui \
     recipe.ui

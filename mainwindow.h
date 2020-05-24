@@ -28,6 +28,7 @@ private slots:
     void update_form();
     void on_erase_btn__clicked();
     void on_open_btn__clicked();
+    void on_filter_btn__clicked();
 };
 
 struct MainWindow::Recipe {

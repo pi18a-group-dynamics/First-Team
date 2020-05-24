@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QListView>
 #include <type_traits>
+#include "filter.hpp"
 #include "ingredients.h"
 #include "categories.h"
 #include "recipe.hpp"
@@ -247,4 +248,8 @@ void MainWindow::on_open_btn__clicked() {
     connect(recipe, &::Recipe::category_change, this, &MainWindow::update_category);
     ui_->open_btn_->setEnabled(false);
     recipe->show();
+}
+
+void MainWindow::on_filter_btn__clicked() {
+    (new Filter)->show();
 }
