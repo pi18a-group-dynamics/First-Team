@@ -30,12 +30,12 @@ void Recipe::form_init() {
     table->setSelectionMode(QTableWidget::SelectionMode::SingleSelection);
     table->setSelectionBehavior(QTableWidget::SelectRows);
     QSqlQuery categories;
-    categories.exec("SELECT * FROM categories;");
+    categories.exec("SELECT * FROM categories ORDER BY name;");
     while (categories.next()) {
         ui_->categories_box_->addItem(categories.value("name").toString(), categories.value("id"));
     }
     QSqlQuery ingredients;
-    ingredients.exec("SELECT * FROM ingredients;");
+    ingredients.exec("SELECT * FROM ingredients ORDER BY name;");
     while (ingredients.next()) {
         ui_->ingredient_combo_->addItem(ingredients.value("name").toString(), ingredients.value("id"));
     }
@@ -44,6 +44,12 @@ void Recipe::form_init() {
 void Recipe::push_init() {
     connect(ui_->save_btn_, &QPushButton::clicked, [this]() {
        QSqlQuery query;
+       query.exec("SELECT EXISTS(SELECT * FROM categories);");
+       query.next();
+       if (!query.value(0).toBool()) {
+           QMessageBox::warning(nullptr, "Ошибка", "Создайте категорию.");
+           return;
+       }
        QVariant recipe_id;
        query.prepare("INSERT INTO recipies VALUES(default, :category_id, :algorithm, :chosen, :name) RETURNING id;");
        query.bindValue(":category_id", ui_->categories_box_->currentData());
@@ -193,6 +199,7 @@ void Recipe::on_insert_btn__clicked() {
     item->setText(QString::number(ui_->ingredient_spin_->value()) + ' ' + ui_->meansurement_label_->text());
     item->setData(Qt::UserRole, ui_->ingredient_spin_->value());
     table->setItem(row, 1, item);
+    table->sortItems(0);
 }
 
 void Recipe::on_close_btn__clicked() {

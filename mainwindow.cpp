@@ -64,7 +64,7 @@ QTableWidget* MainWindow::create_category_table(QString category_name, QPixmap p
                             "CONCAT(CONCAT(ir.count, ' '), i.meansurement) "
                             "AS \"Количество\" FROM ingredients_of_recipies ir "
                             "LEFT JOIN ingredients i ON ir.ingredient_id = i.id "
-                            "WHERE recipe_id = \'" + recipies_id + "\';");
+                            "WHERE recipe_id = \'" + recipies_id + "\' ORDER BY 1;");
             ui_->ingredients_table_->setModel(model);
             ui_->ingredients_table_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
             ui_->ingredients_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
