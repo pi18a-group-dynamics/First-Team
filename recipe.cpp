@@ -113,12 +113,12 @@ void Recipe::change_init(QVariant id) {
        query.prepare("UPDATE recipies SET "
                      "category_id = :category_id, "
                      "algorithm = :algorithm, "
-                     "chosen = :chosen, "
+                     //"chosen = :chosen, "
                      "name = :name "
                      "WHERE id = :id;");
        query.bindValue(":category_id", ui_->categories_box_->currentData());
        query.bindValue(":algorithm", ui_->algorithm_text_->toPlainText());
-       query.bindValue(":chosen", false);
+       //query.bindValue(":chosen", false);
        query.bindValue(":name", ui_->name_line_->text());
        query.bindValue(":id", id);
        query.exec();

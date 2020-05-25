@@ -94,10 +94,10 @@ void MainWindow::insert_recipies(QTableWidget* table, const Recipe& recipe) {
     size_t row = table->rowCount() - 1;
     QTableWidgetItem* item = new QTableWidgetItem;
     if (recipe.chosen) {
-        item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-проверено-512.png").scaled(30, 30, Qt::KeepAspectRatio));
+        item->setData(Qt::DecorationRole, QPixmap(QCoreApplication::applicationDirPath() + "/star.png").scaled(30, 30, Qt::KeepAspectRatio));
         item->setText("Избранный");
     } else {
-        item->setData(Qt::DecorationRole, QPixmap("/home/kirill/Загрузки/icons8-отмена-512.png").scaled(30, 30, Qt::KeepAspectRatio));
+        item->setData(Qt::DecorationRole, QPixmap(QCoreApplication::applicationDirPath() + "/star (1).png").scaled(30, 30, Qt::KeepAspectRatio));
         item->setText("Не избранное");
     }
     item->setData(Qt::UserRole, recipe.chosen);
