@@ -32,15 +32,18 @@ void Filter::form_init() {
     ui_->right_category_->horizontalHeader()->setSelectionMode(QAbstractItemView::SingleSelection);
     ui_->right_category_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui_->right_category_->setHorizontalHeaderLabels({"Выбранные категории"});
+    ui_->right_category_->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_->right_ingredients_->setColumnCount(1);
     ui_->right_ingredients_->horizontalHeader()->setSelectionMode(QAbstractItemView::SingleSelection);
     ui_->right_ingredients_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui_->right_ingredients_->setHorizontalHeaderLabels({"Выбранные ингредиенты"});
+    ui_->right_ingredients_->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //category init left table
     QSqlQuery query;
     query.exec("SELECT * FROM categories ORDER BY name;");
     QTableWidgetItem* item = nullptr;
     QTableWidget* table = ui_->left_category_;
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setColumnCount(1);
     table->horizontalHeader()->setSelectionMode(QAbstractItemView::SingleSelection);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -59,6 +62,7 @@ void Filter::form_init() {
     //ingredients init left table
     query.exec("SELECT id, CONCAT(CONCAT(CONCAT(name, ' ('), meansurement), ')') AS name FROM ingredients ORDER BY name;");
     table = ui_->left_ingredients_;
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setColumnCount(1);
     table->horizontalHeader()->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
